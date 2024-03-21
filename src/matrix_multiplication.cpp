@@ -8,12 +8,7 @@ using namespace std;
 
 double** allocate_matrix(int size){
     double** A;
-
-    // Initialize random device
-    random_device                   rand_dev;
-    mt19937                        eng(rand_dev());
-    uniform_real_distribution<>     distribution(-1,1);
-
+    
     // Allocate memory for each row
     A = new double*[size];
 
@@ -63,13 +58,20 @@ void print_matrix(double** A, int size){
 }
 
 void matrix_multiplication(double** A, double** B, double** C, int size){
-    for(int i = 0; i < size; i++){
-        for(int j = 0; j < size; j++){
-            for(int k = 0; k < size; k ++){
-                C[i][j] += A[i][k] * B[k][j];
+    int i;
+
+    // Create a parallel region
+    #pragma omp parallel shared(A,B,C) private(i)
+    {
+        #pragma omp for schedule(dynamic)
+        for(i = 0; i < size; i++){
+            for(int j = 0; j < size; j++){
+                for(int k = 0; k < size; k ++){
+                    C[i][j] += A[i][k] * B[k][j];
+                }
             }
-        }
-    } 
+        } 
+    }
 }
 
 int main(int argc, char** argv){
