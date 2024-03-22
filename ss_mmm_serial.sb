@@ -1,12 +1,16 @@
 #!/bin/bash
 
-JOB_NAME="MMM_serial"
-
-#SBATCH --job-name="$JOB_NAME"
-#SBATCH --output="$JOB_NAME.out"
-#SBATCH --time=00:10:00
+#SBATCH --job-name=MMM_serial
+#SBATCH --output=MMM_serial.out
+#SBATCH --time=00:05:00
 #SBATCH --mem=100MB
 #SBATCH --ntasks=1
+#SBATCH --constraint=amr
+
+JOB_NAME="MMM_serial"
+
+# Show job information
+scontrol show job "$SLURM_JOB_ID"
 
 # Change directory 
 cd "$SLURM_SUBMIT_DIR"

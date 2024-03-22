@@ -59,20 +59,21 @@ void print_matrix(double** A, int size){
 }
 
 void matrix_multiplication(double** A, double** B, double** C, int size){
-    int i;
+    double sum;
 
     // Create a parallel region
-    #pragma omp parallel shared(A,B,C) private(i)
-    {
-        #pragma omp for schedule(dynamic)
-        for(i = 0; i < size; i++){
-            for(int j = 0; j < size; j++){
-                for(int k = 0; k < size; k ++){
-                    C[i][j] += A[i][k] * B[k][j];
-                }
+    #pragma omp parallel for default(none) shared(A,B,C,size) private(sum)
+    for(int i = 0; i < size; i++){
+        for(int j = 0; j < size; j++){
+            sum = 0;
+
+            for(int k = 0; k < size; k ++){
+                sum += A[i][k] * B[k][j];
             }
-        } 
-    }
+
+            C[i][j] = sum;
+        }
+    } 
 }
 
 int main(int argc, char** argv){
