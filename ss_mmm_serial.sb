@@ -16,7 +16,7 @@ scontrol show job "$SLURM_JOB_ID"
 cd "$SLURM_SUBMIT_DIR"
 
 # Compile Program
-g++ -std=c++11 src/matrix_multiplication.cpp -o "$JOB_NAME"
+g++ -std=c++11 src/matrix_multiplication.cpp src/matrix_math.cpp -o "$JOB_NAME"
 
 # Run program
 MATRIX_SIZE=(20 100 1000)
