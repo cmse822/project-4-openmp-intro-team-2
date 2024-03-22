@@ -6,4 +6,5 @@ void fill_matrix(double** A, int size, bool flag=false);
 void deallocate_matrix(double** &, int);
 void print_matrix(double** A, int);
 void matrix_multiplication(double**, double**,double**, int);
+void load_matrix(double**, int, std::string);
 #endif

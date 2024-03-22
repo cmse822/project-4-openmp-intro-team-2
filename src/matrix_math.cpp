@@ -2,6 +2,8 @@
 #include <random>
 #include <cstdlib>
 #include <iostream>
+#include <string>
+#include <fstream>
 
 double** allocate_matrix(int size){
     double** A;
@@ -70,4 +72,32 @@ void matrix_multiplication(double** A, double** B, double** C, int size){
             C[i][j] = sum;
         }
     } 
+}
+
+void load_matrix(double** matrix, int size, std::string filename){
+    std::fstream matrix_file;
+    matrix_file.open(filename);
+    std::string line;
+    std::string delimiter = ",";
+    size_t pos = 0;
+    std::string token;
+    int i = 0;
+    int j = 0;
+    double val;
+    while ( matrix_file && i < size) {
+        getline(matrix_file, line);
+        delimiter = ",";
+        pos = 0;
+        j = 0;
+        while ((pos = line.find(delimiter)) != std::string::npos) {
+            token = line.substr(0, pos);
+            line.erase(0, pos + delimiter.length());
+            val = stod(token);
+            matrix[i][j] = val;
+            j++;
+        }
+        val = stod(token);
+        matrix[i][j] = val;
+        i++;
+    }
 }
