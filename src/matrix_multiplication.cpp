@@ -3,6 +3,7 @@
 #include <string> 
 #include <random>
 #include <chrono>
+#include <cstdlib>
 
 using namespace std;
 
@@ -79,6 +80,7 @@ int main(int argc, char** argv){
     int SIZE;
     string FILE_NAME;
     fstream output_file;
+    const char* NUM_THREADS;
 
     // Validate inputs 
     if (argc != 3){
@@ -92,9 +94,14 @@ int main(int argc, char** argv){
         // Store file name
         FILE_NAME = argv[2];
 
+        // Determine number of threads
+        NUM_THREADS = getenv("OMP_NUM_THREADS");
+
+        cout << "Threads: " << NUM_THREADS << endl;
         cout << "Matrix size: " << SIZE << "x" << SIZE << endl;
         cout << "Output file name: " << FILE_NAME << endl;
     }
+    
 
     // Allocate matrices
     double** A = allocate_matrix(SIZE);
@@ -120,7 +127,7 @@ int main(int argc, char** argv){
         chrono::duration<double> time = (end - start);
 
         // Write to file
-        output_file << SIZE << "," << time.count() << endl;
+        output_file << NUM_THREADS << ","  << SIZE << "," << time.count() << endl;
     }
 
     // Close file_stream

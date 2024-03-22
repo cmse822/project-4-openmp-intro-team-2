@@ -1,0 +1,23 @@
+#!/bin/bash
+
+JOB_NAME="MMM_single"
+
+#SBATCH --job-name="$JOB_NAME"
+#SBATCH --output="$JOB_NAME.out"
+#SBATCH --time=00:10:00
+#SBATCH --mem=100MB
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+
+# Compile Program
+g++ -std=c++11 -fopenmp src/matrix_multiplication.cpp -o "$JOB_NAME"
+
+# Run program
+export OMP_NUM_THREADS=1
+
+MATRIX_SIZE=(20 100 1000)
+for SIZE in "${MATRIX_SIZE[@]}"; do 
+    ./"$JOB_NAME" $SIZE "data/$JOB_NAME.csv"
+done
+
+rm "$JOB_NAME"
