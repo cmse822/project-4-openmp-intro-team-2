@@ -20,6 +20,34 @@ double** allocate_matrix(int size){
     return A;
 }
 
+void load_matrix(double** matrix, int size, string filename){
+    fstream matrix_file;
+    matrix_file.open(filename);
+    string line;
+    string delimiter = ",";
+    size_t pos = 0;
+    string token;
+    int i = 0;
+    int j = 0;
+    double val;
+    while ( matrix_file && i < size) {
+        getline(matrix_file, line);
+        delimiter = ",";
+        pos = 0;
+        j = 0;
+        while ((pos = line.find(delimiter)) != string::npos) {
+            token = line.substr(0, pos);
+            line.erase(0, pos + delimiter.length());
+            val = stod(token);
+            matrix[i][j] = val;
+            j++;
+        }
+        val = stod(token);
+        matrix[i][j] = val;
+        i++;
+    }
+}
+
 void fill_matrix(double** A, int size, bool flag=false){
     double val;
 
@@ -79,20 +107,24 @@ int main(int argc, char** argv){
     // Declare variables
     int SIZE;
     string FILE_NAME;
+    string file_matrix_A;
+    string file_matrix_B;
     fstream output_file;
     const char* NUM_THREADS;
 
     // Validate inputs 
-    if (argc != 3){
+    if (argc != 5){
         cout << "Invalid number of input arguments" << endl;
-
+        cout << "USAGE: matrix_multiplication {size} {A matrix file} {B matrix file} {output file}" << endl;
         return -1;
     } else{
         // Store matrix size
         SIZE = atoi(argv[1]);
 
         // Store file name
-        FILE_NAME = argv[2];
+        file_matrix_A = argv[2];
+        file_matrix_B = argv[3];
+        FILE_NAME = argv[4];
 
         // Determine number of threads
         NUM_THREADS = getenv("OMP_NUM_THREADS");
@@ -109,8 +141,10 @@ int main(int argc, char** argv){
     double** C = allocate_matrix(SIZE);
 
     // Fill matrices
-    fill_matrix(A,SIZE);
-    fill_matrix(B,SIZE);
+    //fill_matrix(A,SIZE);
+    load_matrix(A,SIZE,file_matrix_A);
+    //fill_matrix(B,SIZE);
+    load_matrix(B,SIZE,file_matrix_B);
 
     // Open file stream
     output_file.open(FILE_NAME, ios::out | ios::app);
