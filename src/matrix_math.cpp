@@ -36,7 +36,7 @@ void fill_matrix(double** A, int m, bool flag, int n){
     for(int i = 0; i < m; i++){
         for(int j = 0; j < n; j++){
             if (flag  == true){
-                val = 0;
+                val = 1;
             }
             
             A[i][j] = val;
@@ -68,16 +68,18 @@ void print_matrix(double** A, int m,int n){
     std::cout << std::endl;
 }
 
-void matrix_multiplication(double** A, double** B, double** C, int size){
+void matrix_multiplication(double** A, double** B, double** C, int n, int m){
     double sum;
+    if (m == -1){
+        m = n;
+    }
 
     // Create a parallel region
     #pragma omp parallel for default(none) shared(A,B,C,size) private(sum)
-    for(int i = 0; i < size; i++){
-        for(int j = 0; j < size; j++){
+    for(int i = 0; i < m; i++){
+        for(int j = 0; j < n; j++){
             sum = 0;
-
-            for(int k = 0; k < size; k ++){
+            for(int k = 0; k < n; k ++){
                 sum += A[i][k] * B[k][j];
             }
 
