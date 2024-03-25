@@ -1,24 +1,30 @@
 #include "matrix_math.h"
 #include <random>
-#include <cstdlib>
 #include <iostream>
-#include <string>
 #include <fstream>
+#include <mpi.h>
 
-double** allocate_matrix(int size){
+double** allocate_matrix(int m, int n){
+    if (n == -1){
+        n = m;
+    }
+
     double** A;
     
     // Allocate memory for each row
-    A = new double*[size];
+    A = new double*[m];
 
-    for(int i = 0; i < size; i++){
-        A[i] = new double[size];
+    for(int i = 0; i < m; i++){
+        A[i] = new double[n];
     }
 
     return A;
 }
 
-void fill_matrix(double** A, int size, bool flag){
+void fill_matrix(double** A, int m, bool flag, int n){
+    if(n == -1){
+        n = m;
+    }
     double val;
 
     // Initialie random device
@@ -27,8 +33,8 @@ void fill_matrix(double** A, int size, bool flag){
     std::uniform_real_distribution<>     distribution(-1,1);
 
     // Fill matrix
-    for(int i = 0; i < size; i++){
-        for(int j = 0; j < size; j++){
+    for(int i = 0; i < m; i++){
+        for(int j = 0; j < n; j++){
             if (flag  == true){
                 val = 0;
             }
@@ -46,14 +52,20 @@ void deallocate_matrix(double** &A, int size){
     delete[] A;
 }
 
-void print_matrix(double** A, int size){
-    for(int i = 0; i < size; i++){
-        for(int j = 0; j < size; j++){
+void print_matrix(double** A, int m,int n){
+    if (n == -1){
+        n = m; 
+    }
+
+    for(int i = 0; i < m; i++){
+        for(int j = 0; j < n; j++){
             std::cout << A[i][j] << " ";
         }
 
         std::cout << std::endl;
     }   
+
+    std::cout << std::endl;
 }
 
 void matrix_multiplication(double** A, double** B, double** C, int size){
@@ -74,30 +86,36 @@ void matrix_multiplication(double** A, double** B, double** C, int size){
     } 
 }
 
-void load_matrix(double** matrix, int size, std::string filename){
-    std::fstream matrix_file;
-    matrix_file.open(filename);
-    std::string line;
-    std::string delimiter = ",";
-    size_t pos = 0;
-    std::string token;
-    int i = 0;
-    int j = 0;
-    double val;
-    while ( matrix_file && i < size) {
-        getline(matrix_file, line);
-        delimiter = ",";
-        pos = 0;
-        j = 0;
-        while ((pos = line.find(delimiter)) != std::string::npos) {
-            token = line.substr(0, pos);
-            line.erase(0, pos + delimiter.length());
-            val = stod(token);
-            matrix[i][j] = val;
-            j++;
+void flatten(double** matrix, double* matrix_flat, int m, int n){
+    int idx;
+    if(n == -1){
+        n = m;
+    }
+
+    for (int i = 0; i < m; i++){
+        for (int j = 0; j < n; j++){
+            // Calculate linear index
+            idx = j + i * n;
+
+            matrix_flat[idx] = matrix[i][j];
         }
-        val = stod(token);
-        matrix[i][j] = val;
-        i++;
+    }
+}
+
+void unflatten(double* matrix_flat, double** matrix, int m, int n){
+    int i, j, num_elements;
+    if(n == -1){
+        n = m;
+    }
+    
+    // Determine number of elements
+    num_elements = n * m;
+
+    for (int idx = 0; idx < num_elements; idx++){
+        // Calculate indices
+        i = idx / n;
+        j = idx % n;
+
+        matrix[i][j] = matrix_flat[idx];
     }
 }
