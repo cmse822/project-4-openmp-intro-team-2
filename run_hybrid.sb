@@ -1,0 +1,14 @@
+#!/bin/bash 
+
+# Determine number of ranks
+RANKS=(2 4 8 16 32 64)
+for RANK in "${RANKS[@]}"; do
+    # Determine number of threads per rank
+    THREADS=$(expr 64 / $RANK)
+    JOB_NAME="MMM_hybrid_"$RANK"_"$THREADS""
+
+    # Submit job
+    COMMAND="--job-name="$JOB_NAME" --output="$JOB_NAME.out" --ntasks=$RANK --nodes=$RANK --cpus-per-task=$THREADS ss_mmm_hybrid.sb "$JOB_NAME" $RANK $THREADS 10" 
+
+    sbatch $COMMAND
+done
