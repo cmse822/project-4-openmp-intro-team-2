@@ -2,6 +2,11 @@
 
 ## Part 1: OpenMP Matrix-Matrix Multiplication
 
+### Results Serial Version
+![img1](/analysis/serial_results.jpg)
+
+### Results OpenMP Version
+![img1](/analysis/openmp_results.jpg)
 
 ## Part 2: Adding OpenMP threading to a simple MPI application
 - The print statement was wrapped in the `omp parallel` region after the MPI initialization environment.
