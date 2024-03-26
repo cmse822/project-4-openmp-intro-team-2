@@ -1,0 +1,51 @@
+#!/bin/bash
+
+#SBATCH --job-name=allLong
+#SBATCH --output=allLong.out
+#SBATCH --time=10:59:00
+#SBATCH --mem-per-cpu=200MB
+#SBATCH --ntasks=64
+#SBATCH --cpus-per-task=1
+#SBATCH --nodes=1
+#SBATCH --constraint=amr
+
+JOB_NAME="MMM_parallel"
+
+# Show job information
+scontrol show job "$SLURM_JOB_ID"
+
+# Change directory 
+cd "$SLURM_SUBMIT_DIR"
+
+# Compile Program
+g++ -std=c++11 src/matrix_multiplication.cpp src/matrix_math.cpp -o MMM_Serial
+g++ -std=c++11 -fopenmp src/matrix_multiplication.cpp src/matrix_math.cpp -o MMM_Parallel
+
+# Run program for Serial
+MATRIX_SIZE=(20 100 1000 3000)
+ITERATION=(100 100 50 15)
+len=${#MATRIX_SIZE[@]}
+export OMP_NUM_THREADS=1
+for ((i=0; i<$len; i++)); do
+    SIZE=${MATRIX_SIZE[i]}
+    ITER=${ITERATION[i]}
+    ./MMM_Serial $SIZE "data/MMM_Serial_all.csv" $ITER
+done
+
+
+# Run the program for parallel.
+NUM_THREADS=(1 2 4 8 16 32 64)
+for THREADS in "${NUM_THREADS[@]}";do
+    export OMP_NUM_THREADS=$THREADS
+
+    for ((i=0; i<$len; i++)); do
+        SIZE=${MATRIX_SIZE[i]}
+        ITER=${ITERATION[i]}
+        ./MMM_Parallel $SIZE "data/MMM_Parallel_all.csv" $ITER
+    done
+done
+
+
+# Run the hybrid case.
+
+

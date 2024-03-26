@@ -1,8 +1,12 @@
 #include "matrix_math.h"
 #include <random>
 #include <iostream>
+#include <iomanip>
 #include <fstream>
 #include <mpi.h>
+#include <vector>
+#include <sstream>
+
 
 double** allocate_matrix(int m, int n){
     if (n == -1){
@@ -35,6 +39,7 @@ void fill_matrix(double** A, int m, bool flag, int n){
     // Fill matrix
     for(int i = 0; i < m; i++){
         for(int j = 0; j < n; j++){
+            val = distribution(eng);
             if (flag  == true){
                 val = 1;
             }
