@@ -75,7 +75,7 @@ void matrix_multiplication(double** A, double** B, double** C, int n, int m){
     }
 
     // Create a parallel region
-    #pragma omp parallel for default(none) shared(A,B,C,size) private(sum)
+    #pragma omp parallel for default(none) shared(A,B,C,m,n) private(sum)
     for(int i = 0; i < m; i++){
         for(int j = 0; j < n; j++){
             sum = 0;

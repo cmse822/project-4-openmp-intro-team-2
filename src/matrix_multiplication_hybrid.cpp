@@ -123,6 +123,7 @@ int main(int argc, char** argv){
             MPI_Send(buffer[i], size_curr, MPI_DOUBLE, i+1, 0, MPI_COMM_WORLD);
         }
 
+        #ifdef DEBUG_MODE 
         // Print matrices
         cout << "A:" << endl;
         print_matrix(A,SIZE);
@@ -130,7 +131,6 @@ int main(int argc, char** argv){
         cout << "B:" << endl;
         print_matrix(B,SIZE);
 
-         #ifdef DEBUG_MODE        
         cout << "B_flat:" << endl;
         print_matrix(&B_flat,1,SIZE*SIZE);
         #endif
@@ -195,8 +195,10 @@ int main(int argc, char** argv){
         // Stop time
         time = MPI_Wtime() - start;
         
+        #ifdef DEBUG_MODE
         cout << "Result:" << endl;
         print_matrix(C, SIZE);
+        #endif
 
         cout << "in " << time << "seconds" << endl;
 
