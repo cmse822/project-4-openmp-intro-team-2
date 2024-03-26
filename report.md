@@ -78,26 +78,26 @@ The results were calculated and showed in the below table. As this table shows, 
 | Parallel | 100  | 2 | $1.1 \times 10^{-15}$ |
 | Parallel | 1000 | 2 | $1.1 \times 10^{-15}$ |
 | Parallel | 3000 | 2 | $1.1 \times 10^{-15}$ |
-| Parallel | 20   | 4 | $1.1 \times 10^{-15}$ |
-| Parallel | 100  | 4 | $1.1 \times 10^{-15}$ |
-| Parallel | 1000 | 4 | $1.1 \times 10^{-15}$ |
-| Parallel | 3000 | 4 | $1.1 \times 10^{-15}$ |
-| Parallel | 20   | 8 | $1.1 \times 10^{-15}$ |
-| Parallel | 100  | 8 | $1.1 \times 10^{-15}$ |
-| Parallel | 1000 | 8 | $1.1 \times 10^{-15}$ |
-| Parallel | 3000 | 8 | $1.1 \times 10^{-15}$ |
-| Parallel | 20   | 16 | $1.1 \times 10^{-15}$ |
-| Parallel | 100  | 16 | $1.1 \times 10^{-15}$ |
-| Parallel | 1000 | 16 | $1.1 \times 10^{-15}$ |
-| Parallel | 3000 | 16 | $1.1 \times 10^{-15}$ |
-| Parallel | 20   | 32 | $1.1 \times 10^{-15}$ |
-| Parallel | 100  | 32 | $1.1 \times 10^{-15}$ |
-| Parallel | 1000 | 32 | $1.1 \times 10^{-15}$ |
-| Parallel | 3000 | 32 | $1.1 \times 10^{-15}$ |
-| Parallel | 20   | 64 | $1.1 \times 10^{-15}$ |
-| Parallel | 100  | 64 | $1.1 \times 10^{-15}$ |
-| Parallel | 1000 | 64 | $1.1 \times 10^{-15}$ |
-| Parallel | 3000 | 64 | $1.1 \times 10^{-15}$ |
+| Parallel | 20   | 4 | $1.40 \times 10^{-16}$ |
+| Parallel | 100  | 4 | $6.33 \times 10^{-16}$ |
+| Parallel | 1000 | 4 | $8.40 \times 10^{-15}$ |
+| Parallel | 3000 | 4 | $XXX \times 10^{-14}$ |
+| Parallel | 20   | 8 | $1.46 \times 10^{-16}$ |
+| Parallel | 100  | 8 | $6.25 \times 10^{-16}$ |
+| Parallel | 1000 | 8 | $8.38 \times 10^{-15}$ |
+| Parallel | 3000 | 8 | $2.46 \times 10^{-14}$ |
+| Parallel | 20   | 16 | $1.47 \times 10^{-16}$ |
+| Parallel | 100  | 16 | $6.35 \times 10^{-16}$ |
+| Parallel | 1000 | 16 | $8.38 \times 10^{-15}$ |
+| Parallel | 3000 | 16 | $2.46 \times 10^{-14}$ |
+| Parallel | 20   | 32 | $1.41 \times 10^{-16}$ |
+| Parallel | 100  | 32 | $6.37 \times 10^{-16}$ |
+| Parallel | 1000 | 32 | $8.36 \times 10^{-15}$ |
+| Parallel | 3000 | 32 | $2.46 \times 10^{-14}$ |
+| Parallel | 20   | 64 | $1.55 \times 10^{-16}$ |
+| Parallel | 100  | 64 | $6.11 \times 10^{-16}$ |
+| Parallel | 1000 | 64 | $8.36 \times 10^{-15}$ |
+| Parallel | 3000 | 64 | $2.46 \times 10^{-14}$ |
 
 ## Part 2: Adding OpenMP threading to a simple MPI application
 - The print statement was wrapped in the `omp parallel` region after the MPI initialization environment.
@@ -113,4 +113,27 @@ On the left side of the image, we see that the mpi utilized all the available th
 - From both figures, we see clearly that the print statement did not follow any particular order, and this is because of the non-deterministic scheduling of threads and processes.
 
 ## Part 3: Hybrid Parallel Matrix Multiplication
-![img1](/analysis/hybrid_results.jpg)
+
+### Q1 & Q2: Add MPI to  you OpenMP MMM code by distributing the rows of one of the input matrices across MPI ranks. Carry out a performance study in which you vary the number of MPI ranks and OpenMP threads.
+
+The MMM code was modified to include hybrid parallelization using both `OpenMP` and `MPI` methods, which can be found under `src/matrix_multiplication_hybrid.cpp`. In this code, the `MPI` works on the outer-most loop which is over the rows of the first matrix and then the `OpenMP` parallelization works on the middle loop and therefore make the program more efficient. 
+
+After development of the code, it was submitted to the HPCC at different combinations of the tasks and threads per tasks, by keeping the total number of physical cores constant and equal to 64. Therefore, we have the following combinations:
+
+| # tasks | # thread per task | # total cores| 
+| -- | -- | -- |
+| 2 | 32 | 64 |
+| 4 | 16 | 64 |
+| 8 | 8 | 64 |
+| 16 | 4 | 64 |
+| 32 | 2 | 64 |
+| 64 | 1 | 64 |
+
+The results are shown in the figure below. As this figure shows, the best performance of the hybrid parallel computation for the small matrix sizes were acheieved when the number of tasks are low and more threads are used. This observation makes sense as the `MPI` tasks were applied on the outer-most rows of the first matrix and less individual tasks with more threads can reduce the small communication messages through the `MPI` and therefore improve the efficiency. This way, the amount of comminucation compared to the actual computations were much less and therefore we have more efficient calculations overall. 
+
+<img src="./analysis/Fig04_Hybrid.png" alt="Hybrid results" width=800>
+
+On the other hand, as we increase the matrix size, the computations either on threads (using `OpenMP`) or ranks (through `MPI` communication) were taking most of the time and the time required for communication will be much less than the time for computation. Therefore, all different combinations of the tasks and threads will be converged to an optimum point as the size of the matrix increases. 
+
+In another word, these results confirms that for small matrices it is more efficient to use on node calculations and parallel the code using the `OpenMP`. However, as the size of the matrix increases, we might not be able to fit the calculation on one node, and therefore we need to use `MPI` communication to use more than one node. In this case, if the matrix size is large enough, the application of the hybrid parallelization method can be optimum regardless of the different combinations used.
+
