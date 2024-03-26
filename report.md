@@ -60,7 +60,7 @@ The scaling as a function of the number of threads are shown in the figure below
 
 In order to verify the outputs, the A, B, and C matrixes ($C = A \times B$) were saved as CSV file at the end of the program, for each combination of matrix size, number of threads used and serial/parallel run. The input A and B matrices were then read in Python and the exact C ($C_{exact}$) was calculated by which the average total error was calculated using the following equation:
 
-$Error =  \frac{\sum |C_{exact} - C|}{\text{\# data}}$
+$Error =  \frac{\sum |C_{exact} - C|}{\text{Num data}}$
 
 The results were calculated and showed in the below table. As this table shows, the average total error for all different combinations were less than $10^{-13}$, and therefore, all solutions were assumed ACCURATE.
 

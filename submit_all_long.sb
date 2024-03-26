@@ -21,20 +21,13 @@ cd "$SLURM_SUBMIT_DIR"
 g++ -std=c++11 src/matrix_multiplication.cpp src/matrix_math.cpp -o MMM_Serial
 g++ -std=c++11 -fopenmp src/matrix_multiplication.cpp src/matrix_math.cpp -o MMM_Parallel
 
-# Run program for Serial
-MATRIX_SIZE=(20 100 1000 3000)
-ITERATION=(100 100 50 15)
-len=${#MATRIX_SIZE[@]}
-export OMP_NUM_THREADS=1
-for ((i=0; i<$len; i++)); do
-    SIZE=${MATRIX_SIZE[i]}
-    ITER=${ITERATION[i]}
-    ./MMM_Serial $SIZE "data/MMM_Serial_all.csv" $ITER
-done
-
 
 # Run the program for parallel.
-NUM_THREADS=(1 2 4 8 16 32 64)
+MATRIX_SIZE=(20 100 1000 3000)
+ITERATION=(100 100 50 15)
+NUM_THREADS=(64 32 16 8 4 2 1)
+len=${#MATRIX_SIZE[@]}
+
 for THREADS in "${NUM_THREADS[@]}";do
     export OMP_NUM_THREADS=$THREADS
 
@@ -44,6 +37,16 @@ for THREADS in "${NUM_THREADS[@]}";do
         ./MMM_Parallel $SIZE "data/MMM_Parallel_all.csv" $ITER
     done
 done
+
+
+# Run program for Serial
+export OMP_NUM_THREADS=1
+for ((i=0; i<$len; i++)); do
+    SIZE=${MATRIX_SIZE[i]}
+    ITER=${ITERATION[i]}
+    ./MMM_Serial $SIZE "data/MMM_Serial_all.csv" $ITER
+done
+
 
 
 # Run the hybrid case.
