@@ -12,30 +12,42 @@ using namespace std;
 int main(int argc, char** argv){
     // Declare variables
     int SIZE;
+    int Iter;
     string FILE_NAME;
     fstream output_file;
     const char* NUM_THREADS;
 
     // Validate inputs 
-    if (argc != 3){
-        cout << "Invalid number of input arguments" << endl;
-
-        return -1;
-    } else{
+    if (argc == 3) {
         // Store matrix size
         SIZE = atoi(argv[1]);
-
         // Store file name
         FILE_NAME = argv[2];
-
+        // Store the number of iterations.
+        Iter = 100;
         // Determine number of threads
         NUM_THREADS = getenv("OMP_NUM_THREADS");
-
         cout << "Threads: " << NUM_THREADS << endl;
         cout << "Matrix size: " << SIZE << "x" << SIZE << endl;
+        cout << "# Iteration: " << Iter << endl;
         cout << "Output file name: " << FILE_NAME << endl;
-    }
-    
+    } else if (argc == 4) {
+        // Store matrix size
+        SIZE = atoi(argv[1]);
+        // Store file name
+        FILE_NAME = argv[2];
+        // Store the number of iterations.
+        Iter = atoi(argv[3]);
+        // Determine number of threads
+        NUM_THREADS = getenv("OMP_NUM_THREADS");
+        cout << "Threads: " << NUM_THREADS << endl;
+        cout << "Matrix size: " << SIZE << "x" << SIZE << endl;
+        cout << "# Iteration: " << Iter << endl;
+        cout << "Output file name: " << FILE_NAME << endl;
+    } else {
+        cout << "Invalid number of input arguments" << endl;
+        return -1;
+    }  
 
     // Allocate matrices
     double** A = allocate_matrix(SIZE);
@@ -50,7 +62,7 @@ int main(int argc, char** argv){
     output_file.open(FILE_NAME, ios::out | ios::app);
 
     // Time matrix multiplication
-    for (int i = 0; i < 10; i++){
+    for (int i = 0; i < Iter; i++){
         // Initialize result matrix with zeros
         fill_matrix(C,SIZE,true);
 

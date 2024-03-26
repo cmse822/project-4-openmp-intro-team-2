@@ -37,16 +37,29 @@ However, as the matrix size increases, the difference between the runtimes reduc
 
 <img src="./analysis/Fig01_Serial_Thread1.png" alt="Serial Vs Parallel (#Thread=1) runtime results" width=800>
 
-3. Perform a thread-to-thread speedup study of your MMM code either on your laptop or HPCC. Compute the total time to solution for a few thread counts (in powers of 2): `1,2,4,...T`, where T is the maximum number of threads available on the machine you are using. Do this for matrix sizes of `N=20,100,1000`.
+#### Q3. Perform a thread-to-thread speedup study of your MMM code either on your laptop or HPCC. Compute the total time to solution for a few thread counts (in powers of 2): `1,2,4,...T`, where T is the maximum number of threads available on the machine you are using. Do this for matrix sizes of `N=20,100,1000`.
+
+The parallel code was run in HPCC using the 
+
+
+<img src="./analysis/Fig02_Parallel_Effect_Threads.png" alt="Effect of # threads in Parallel results" width=800>
+
+
 4. Plot the times-to-solution for the MMM for each value of `N` separately as functions of the the thread count `T`. Compare the scaling of the MMM for different matrix dimensions.
+
+
+
+
+
+<img src="./analysis/Fig03_Parallel_Scaling.png" alt="Effect of # threads in Parallel results" width=800>
+
+
 5. Verify that for the same input matrices that the solution does not depend on the number of threads.
 
 
-### Results Serial Version
-![img1](/analysis/serial_results.jpg)
 
-### Results OpenMP Version
-![img1](/analysis/openmp_results.jpg)
+
+
 
 ## Part 2: Adding OpenMP threading to a simple MPI application
 - The print statement was wrapped in the `omp parallel` region after the MPI initialization environment.
