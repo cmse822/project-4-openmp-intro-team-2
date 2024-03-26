@@ -20,3 +20,6 @@ On the left side of the image, we see that the mpi utilized all the available th
 - The image below shows the results obtained when the constraints on the rank is removed, and the rank number is printed together with the thread number used.
 ![img2](/analysis/omp_simple_mpi_app_with_rank.jpg)
 - From both figures, we see clearly that the print statement did not follow any particular order, and this is because of the non-deterministic scheduling of threads and processes.
+
+## Part 3: Hybrid Parallel Matrix Multiplication
+![img1](/analysis/hybrid_results.jpg)
