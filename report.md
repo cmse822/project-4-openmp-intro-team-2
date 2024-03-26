@@ -2,6 +2,46 @@
 
 ## Part 1: OpenMP Matrix-Matrix Multiplication
 
+#### Warm-up question: What strategies could you use to add parallelism using OpenMP threading to this kernel? Is each of the three loops threadable?
+
+We can simply use `#pragma` to parallelize the outer-most loop using the `OpenMP`. This loop goes over each row of the first matrix, and since these calculations are independent, this is the best option for parallelization. 
+
+One may parallelize the middle loop as well. Although, this loop goes over the columns of the second matrix and therefore, there is a possibility that different threads tries to write on the same element. That's why it's not recommended. 
+
+As the last option, parallelization of the inner most loop is not also recommended. The main reason is that this way, the overheading time from `OpenMP` might be much more significant than the advantage gained from the parallelization. 
+
+#### Q1: Modify your MMM code from Project 1 to implement OpenMP threading.
+
+The code for MMM was modified as it can be found under `./src/matrix_math.cpp`. For the parallelization using only `OpenMP`, the MMM nested loop was modified as follows. It was later compiled using the `gcc` compiler using the proper openMP flag.
+
+``` C++
+// Create a parallel region
+#pragma omp parallel for default(none) shared(A,B,C,m,n) private(sum)
+for(int i = 0; i < m; i++){
+    for(int j = 0; j < n; j++){
+        sum = 0;
+        for(int k = 0; k < n; k ++){
+            sum += A[i][k] * B[k][j];
+        }
+
+        C[i][j] = sum;
+    }
+}
+```
+
+#### Q2. Compute the time-to-solution of your MMM code for 1 thread to the non-OpenMP version. Any matrix size `N` will do here. Does it perform as you expect? If not, consider the OpenMP directives you are using.
+
+The results of the serial run against the parallel run with only 1 thread is shown in the following figure. As this figure shows, the Serial code had slightly higher runtimes!!!!!! It should be opposite.
+
+However, as the matrix size increases, the difference between the runtimes reduces, as the overhead time required for setting the `OpemMP` up compared to the total run time is much smaller. 
+
+<img src="./analysis/Fig01_Serial_Thread1.png" alt="Serial Vs Parallel (#Thread=1) runtime results" width=800>
+
+3. Perform a thread-to-thread speedup study of your MMM code either on your laptop or HPCC. Compute the total time to solution for a few thread counts (in powers of 2): `1,2,4,...T`, where T is the maximum number of threads available on the machine you are using. Do this for matrix sizes of `N=20,100,1000`.
+4. Plot the times-to-solution for the MMM for each value of `N` separately as functions of the the thread count `T`. Compare the scaling of the MMM for different matrix dimensions.
+5. Verify that for the same input matrices that the solution does not depend on the number of threads.
+
+
 ### Results Serial Version
 ![img1](/analysis/serial_results.jpg)
 
